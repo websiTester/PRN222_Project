@@ -1,0 +1,330 @@
+﻿@model ProductDetailViewModel
+
+<div id="preloder">
+    <div class="loader"></div>
+</div>
+
+<section class="shop-details">
+    <div class="product__details__pic">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="product__details__breadcrumb">
+                        <a>Trang chủ</a>
+                        <a>Sản phẩm</a>
+                        <span>Thông tin chi tiết</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <ul class="nav nav-tabs" role="tablist">
+                        @foreach(var image in Model.Product.ProductImages)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="" role="tab">
+                                    <div class="product__thumb__pic set-bg" data-setbg="/@image.ImageUrl">
+                                    </div>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+                <div class="col-lg-6 col-md-9">
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="" role="tabpanel">
+                            <div class="product__details__pic__item">
+                                <img src="/@Model.Product.Thumbnail" alt="">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="product__details__content">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-8">
+                    <div class="product__details__text">
+                        <h4>@Model.Product.ProductName</h4>
+                        <div class="rating">
+
+                            @for (int j = 1; j <= 5; j++)
+                            {
+                                if (j <= Model.Product.RatedStar)
+                                {
+                                    <i class="fa fa-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-star-o"></i>
+                                }
+                            }
+
+                            <span> - @Model.Product.Feedbacks.Count Feedbacks</span>
+                        </div>
+                        <h3>
+                            @{
+                                int priceAfterDiscount = (int)(@Model.Product.Price * (1 -  @Model.Product.Discount / 100));
+                            }
+                            @if (Model.Product.Discount > 0)
+                            {
+                                <del style="color: gray; font-size: 14px;">@Model.Product.Price</del>
+                            }
+                            @priceAfterDiscount
+
+                            @if (Model.Product.Discount > 0)
+                            {
+                                <p style="margin-left: 10px;
+                                           font-size: 14px;
+                                           padding: 2px 16px;
+                                           background-color: black;
+                                           color: white;
+                                           display: inline-block;">-@Model.Product.Discount%</p>
+                            }
+                           
+                        </h3>
+
+                        <p>@Model.Product.Description</p>
+                        <div class="product__details__option">
+
+                            <div class="product__details__option__size">
+                                <span>Kích cỡ:</span>
+
+                                <div class="shop__sidebar__tags">
+                                    <form asp-action="ProductDetail" asp-controller="Product">
+                                        <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                                        @foreach (var size in Model.Product.ProductSizes)
+                                        {
+                                            if (size.SizeId == Model.SelectedSizeId)
+                                            {
+
+                                                <button name="sizeId" value="@size.SizeId" type="submit" class="btn btn-dark">@size.Size.SizeName</button>
+                                            }
+                                            else
+                                            {
+                                                <button name="sizeId" value="@size.SizeId" type="submit" class="btn btn-outline-dark">@size.Size.SizeName</button>
+                                            }
+                                        }
+
+
+                                    </form>
+                                    
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="product__details__cart__option">
+                            <form asp-action="AddToCart" asp-controller="Cart">
+                                <span style="margin-right: 12px;  font-weight: bold;">Kho: @Model.ProductSizeQuantity</span>
+                                <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+								<input type="hidden" name="sizeId" value="@Model.SelectedSizeId" />
+                                <div class="quantity">
+                                    <div class="">
+                                        <input required name="quantity" type="number" value="1" min="1" max="@Model.ProductSizeQuantity">
+                                    </div>
+                                </div>
+                                <button type="submit" class="primary-btn">Add to Card</button>
+                                
+                            </form>
+                            <div style="margin-top: 12px;" asp-validation-summary="All" class="text-danger"></div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="product__details__tab">
+                    <ul class="nav nav-tabs" role="tablist">
+                      
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">Feedbacks(@Model.Product.Feedbacks.Count)</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" style="margin: 0px 15%;">
+                     
+                        <div class="tab-pane active" id="tabs-6" role="tabpanel">
+                            <div class="row">
+                                @foreach(var feedback in Model.Product.Feedbacks)
+                                {
+                                    <div class="col-lg-12">
+                                        <div class="product__item row" style="margin: 24px 0;">
+
+                                            <div style="height: 120px" class="product__item__pic col-md-2">
+                                                <img style="width: 100%;height: 100%;" src="/@feedback.Customer.ProfilePictureUrl" alt="img" />
+                                            </div>
+
+                                            <div class="col-md-10">
+                                                <div style="padding: 0" class="blog__details__author__pic col-md-12">
+
+                                                    <img style="margin: 0px 10px 10px 0px;" src="/@feedback.Thumbnail" alt="">
+                                                    <strong>@feedback.Customer.UserName</strong>
+                                                </div>
+                                                <div style="    margin-left: 12px;">
+                                                    <h6>@feedback.Review</h6>
+
+                                                    <div class="rating">
+
+
+                                                        @for (int j = 1; j <= 5; j++)
+                                                        {
+                                                            if (j <= feedback.Rating)
+                                                            {
+                                                                <i class="fa fa-star"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="fa fa-star-o"></i>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <p style="color: #ccc; font-style: italic;">@feedback.CreateAt</p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!--DEMO FEEDBACK START-->
+
+                                <div class="col-lg-12">
+                                    <div class="product__item row" style="margin: 24px 0;">
+
+                                        <div style="height: 120px" class="product__item__pic col-md-2">
+                                            <img style="width: 100%;height: 100%;" src="/img/ProductImg/winter.jpg" alt="img" />
+                                        </div>
+
+                                        <div class="col-md-10">
+                                            <div style="padding: 0" class="blog__details__author__pic col-md-12">
+
+                                                <img style="margin: 0px 10px 10px 0px;" src="/img/ProductImg/wolf1.jpg" alt="">
+                                                <strong>Username</strong>
+                                            </div>
+                                            <div style="    margin-left: 12px;">
+                                                <h6>Review</h6>
+
+                                                <div class="rating">
+
+
+                                                    <i class="fa fa-star-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                </div>
+                                                <p style="color: #ccc; font-style: italic;">23/06/2025</p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <!--DEMO FEEDBACK END-->
+
+                                
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="product__pagination">
+
+                                        <a class="active" href="">1</a>
+                                        <a class="" href="">2</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+<!-- Shop Details Section End -->
+<!-- Related Section Begin -->
+<section class="related spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="related-title">Related Products</h3>
+            </div>
+        </div>
+
+        <div class="row">
+
+            @foreach(var product in Model.RelatedProductList)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-6" >
+                    <div class="product__item" onclick="window.location.href = '/product/productdetail?productId=@product.ProductId'">
+                        <div class="product__item__pic set-bg" data-setbg="/@product.Thumbnail">
+
+                            @if(product.Discount > 0)
+                            {
+                                <span style="background-color: black; color: white;" class="label">-@product.Discount%</span>
+
+                            }
+                            
+                            <ul class="product__hover">
+
+                                <li><a href=""><img src="/img/icon/search.png" alt=""></a></li>
+                            </ul>
+                        </div>
+                        <div class="product__item__text">
+                            <h5 style="cursor: pointer">@product.ProductName</h5>
+
+                            <div class="rating">
+                                @for (int j = 1; j <= 5; j++)
+                                {
+                                    if (j <= Model.Product.RatedStar)
+                                    {
+                                        <i class="fa fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star-o"></i>
+                                    }
+                                }
+
+                            </div>
+                            @{
+                                int priceAfterDiscount2 = (int)(product.Price * (1 - product.Discount / 100));
+                            }
+                            <h5>
+                                @if (product.Discount > 0)
+                                {
+                                    <del style="color: gray; font-size: 12px;">@product.Price</del>
+                                }
+                                @priceAfterDiscount2
+                            </h5>
+
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            
+
+
+        </div>
+    </div>
+</section>

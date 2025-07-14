@@ -1,0 +1,292 @@
+﻿ @model ProductListViewModel
+
+ @section Styles {
+     <link rel="stylesheet" href="/css/nice-select.css">
+ }
+
+<!-- Page Preloder -->
+<div id="preloder">
+    <div class="loader"></div>
+</div>
+<!-- Header Section End -->
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Sản phẩm</h4>
+                    <div class="breadcrumb__links">
+                        <a>Trang chủ</a>
+                        <span>Sản phẩm</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<!-- Shop Section Begin -->
+
+<section class="shop spad">
+    <div class="container">
+        <form asp-action="ProductFilterList" asp-controller="Product">
+            <div class="row">
+            <div class="col-lg-3">
+                <div class="shop__sidebar">
+
+                    <div class="shop__sidebar__accordion">
+                        <div class="accordion" id="accordionExample">
+                            <div class="card">
+                                <div class="card-heading">
+                                    <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
+                                </div>
+                                <div id="collapseOne" class="collapse show" data-parent="#accordionExample1">
+                                    <div class="card-body">
+
+                                        <div class="shop__sidebar__categories">
+                                            <ul class="nice-scroll">
+                                                @for (int i=0;i<Model.CategorieList.Count;i++)
+                                                {
+
+                                                    
+                                                 <li>
+                                                    <div class="form-check">
+                                                      <input asp-for="@Model.CategorieList[i].IsSelected" class="form-check-input" type="checkbox">
+                                                      <input hidden asp-for="@Model.CategorieList[i].CategoryId">
+                                                      <input hidden asp-for="@Model.CategorieList[i].CategoryName">
+                                                      <label asp-for="@Model.CategorieList[i].IsSelected" class="form-check-label">
+                                                        @Model.CategorieList[i].CategoryName
+                                                      </label>
+                                                    </div>
+                                                 </li>
+
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-heading">
+                                    <a data-toggle="collapse" data-target="#collapseTwo">Brands</a>
+                                </div>
+                                <div id="collapseTwo" class="collapse show" data-parent="#accordionExample2">
+                                    <div class="card-body">
+
+                                        <div class="shop__sidebar__brand">
+                                            <ul>
+                                                @for (int i=0;i<Model.BrandList.Count;i++)
+                                                {
+
+                                                 <li>
+                                                    <div class="form-check">
+                                                      <input asp-for="@Model.BrandList[i].IsSelected" class="form-check-input" type="checkbox">
+                                                      <input hidden asp-for="@Model.BrandList[i].BrandId">
+                                                      <input hidden asp-for="@Model.BrandList[i].BrandName">
+                                                      <label asp-for="@Model.BrandList[i].IsSelected" class="form-check-label">
+                                                        @Model.BrandList[i].BrandName
+                                                      </label>
+                                                    </div>
+                                                 </li>
+                                                }
+
+                                               
+                                              
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-heading">
+                                    <a data-toggle="collapse" data-target="#collapseTwo">Price</a>
+                                </div>
+                                <div id="collapseTwo" class="collapse show" data-parent="#accordionExample2">
+                                    <div class="card-body">
+                                        <div class="row" style="margin-top: 14px;">
+                                            <div class="col-md-5">
+                                                <input asp-for="@Model.FromPrice" type="number" min="0" max="1000000000" placeholder="From" style="width: 100%;"> 
+                                            </div>
+                                            <div class="col-md-2">
+                                                --
+                                            </div>
+                                            <div class="col-md-5">
+                                                <input asp-for="@Model.ToPrice" type="number" min="0" max="1000000000" placeholder="To" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            <div class="card">
+                                <div id="collapseThree" class="collapse show" data-parent="#accordionExample3">
+                                    <div class="card-body">
+                                            <button style="margin-top: 10px;
+                                                            width: 100%;" type="submit" class="btn btn-dark">
+                                                Apply
+                                            </button>
+                                   
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-9">
+                <div class="shop__product__option">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="shop__product__option__left">
+
+                                    <input asp-for="@Model.SearchName" style="font-size: 13px;padding: 18px" maxlength="500" class="form-control me-2" type="search" placeholder="Product Name" aria-label="Search">
+                               
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="shop__product__option__right">
+                                    <p>Order by:</p>
+                                    <select asp-for="@Model.SortBy">
+                                        <option value="none">None</option>
+                                        <option value="low">Price: Low to High</option>
+                                        <option value="high">Price: High to Low</option>
+                                        <option value="rate">Rating</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-outline-dark">Apply</button>
+                            
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                    @for(int i = 0; i < Model.ProductList.Count; i++)
+                    {
+                        <input hidden asp-for="@Model.ProductList[i].ProductId">
+                        <input hidden asp-for="@Model.ProductList[i].ProductName">
+                        <input hidden asp-for="@Model.ProductList[i].Price">
+                        <input hidden asp-for="@Model.ProductList[i].Discount">
+                        <input hidden asp-for="@Model.ProductList[i].Thumbnail">
+                        <input hidden asp-for="@Model.ProductList[i].RatedStar">
+                        <input hidden asp-for="@Model.ProductList[i].ProductCategoryId">
+                        <input hidden asp-for="@Model.ProductList[i].BrandId">
+                    }
+
+                <div class="row">
+                    @for(int i = 0; i <Model.ProductListFilterPaging.Count;i++)
+                    {
+                        Product product = Model.ProductListFilterPaging[i];
+                        <!--PRODUCT ITEM START-->
+                        int priceAfterDiscount = (int)(product.Price * (1 - product.Discount / 100));
+                        
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                            <div class="product__item" onclick="window.location.href = '/product/productdetail?productId=@product.ProductId'">
+                                <div class="product__item__pic set-bg" data-setbg="/@product.Thumbnail">
+                                    @if(product.Discount > 0)
+                                    {
+                                        <span style="background-color: black; color: white;" class="label">-@product.Discount%</span>
+                                    }
+                                    
+                                    <ul class="product__hover">
+
+                                        <li><a href=""><img src="/img/icon/search.png" alt=""></a></li>
+                                    </ul>
+                                </div>
+                                <div class="product__item__text">
+                                    <h5 style="cursor: pointer">@product.ProductName</h5>
+
+                                    
+                                    <div class="rating">
+                                        @for(int j=1; j<=5; j++)
+                                        {
+                                            if(j<= product.RatedStar)
+                                            {
+                                                <i class="fa fa-star"></i>
+                                            } else
+                                            {
+                                                <i class="fa fa-star-o"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <h5>
+                                        @if(product.Discount > 0)
+                                        {
+                                            <del style="color: gray; font-size: 12px;">@product.Price</del>
+                                        }
+                                        @priceAfterDiscount
+                                    </h5>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!--PRODUCT ITEM END-->
+                    }
+
+
+                </div>
+
+                <div class="row">
+                    
+                    <div class="col-lg-12">
+                        <div class="product__pagination">
+                             <nav aria-label="Page navigation example">
+                              <ul class="pagination" style="display: inline-flex;">
+                                @for(int i = 1; i <= Model.ProductListFilterPaging.PageCount; i++)
+                                        {
+                                            if (i == Model.ProductListFilterPaging.PageNumber)
+                                            {
+                                                 <li class="page-item active">
+                                                     <button name="page" value="@i" type="submit" 
+                                                         class="page-link active">@i</button>
+                                                 </li>
+                                            } else
+                                            {
+                                                <li class="page-item">
+                                                     <button name="page" value="@i" type="submit" 
+                                                         class="page-link">@i</button>
+                                                 </li>
+                                            }
+                                        }
+                              </ul>
+                            </nav>
+                        
+                            </div>
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        
+    </div>
+</section>
+<!-- Shop Section End -->
+<!-- Search Begin -->
+<div class="search-model">
+    <div class="h-100 d-flex align-items-center justify-content-center">
+        <div class="search-close-switch">+</div>
+        <form class="search-model-form">
+            <input type="text" id="search-input" placeholder="Search here.....">
+        </form>
+    </div>
+</div>
+<!-- Search End -->
+
+
+@section Scripts {
+    <script src="/js/jquery.nice-select.min.js"></script>
+}

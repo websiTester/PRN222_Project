@@ -1,0 +1,158 @@
+﻿@inject SignInManager<User> signInManager;
+@inject IGetAllCartsByUserIdService _getAllCartsByUserIdService;
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    @RenderSection("Styles", required: false)
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/elegant-icons.css">
+    <link rel="stylesheet" href="/css/magnific-popup.css">
+    @* <link rel="stylesheet" href="/css/nice-select.css"> *@
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/slicknav.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    @RenderSection("HeaderScripts", required: false)
+    @RenderSection("Styles2", required: false)
+
+</head>
+<body>
+    <div>
+
+        <!--HEADER START-->
+
+        <header class="header">
+            <div class="header__top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-7">
+                        </div>
+
+
+                        <div class="col-lg-6 col-md-5">
+                            <div class="header__top__right">
+                                <div class="header__top__links">
+
+
+                                    @if (signInManager.IsSignedIn(User))
+                                    {
+                                        <a href="/account/profile">
+                                            <img style="width: 25px;height: 25px;border-radius: 50%"
+                                                 src="~/img/productimg/winter.jpg" alt="" /> @User.Identity.Name
+                                        </a>
+                                        <a href="/account/logout">Đăng xuất</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="/account/login">Đăng nhập</a>
+                                        <a href="/account/register">Đăng ký</a>
+                                    }
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-3">
+                        <div class="header__logo">
+                            <a href=""><img src="~/img/logo.png" alt=""></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <nav class="header__menu mobile-menu">
+                            <ul>
+                                <li class="active"><a href="">Home</a></li>
+                                <li class=""><a asp-action="ProductList" asp-controller="Product">Products</a></li>
+                                @if (signInManager.IsSignedIn(User) && User.IsInRole("Sale Manager"))
+                                {
+                                    <li class=""><a href="/order/ListAssignedOrderSaleManager">Orders</a></li>
+                                }
+
+                                @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                                {
+                                    <li class=""><a href="/admin/listrole">Manage Users</a></li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3">
+                        <div class="header__nav__option row" style="padding: 22px 0;">
+                            <div class="col-md-10">
+                            </div>
+
+                            <div style="display: flex; align-items: center;padding: 0;width: 100%" class="col-md-2">
+                                <a asp-action="CartList" asp-controller="Cart">
+                                    <img style="width: 25px" src="/img/icon/cart.png" alt="">
+                                    <span style="font-weight: bold;width: 100%;text-align: center;padding-right: 8px">
+                                        @if (signInManager.IsSignedIn(User))
+                                        {
+                                            if (Context.Session.GetInt32("TotalCart") != null)
+                                            {
+                                                var totalCart = Context.Session.GetInt32("TotalCart");
+                                                @totalCart
+                                            }
+                                            else
+                                            {
+                                                var userId = User
+                                                .FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                                                List<Cart> carts = _getAllCartsByUserIdService.GetAllCartsByUserId(userId);
+                                                Context.Session.SetInt32("TotalCart", carts.Count);
+                                                @carts.Count
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            @(0)
+                                        }
+                                    </span>
+                                </a>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="canvas__open"><i class="fa fa-bars"></i></div>
+            </div>
+        </header>
+
+        <!--HEADER END-->
+        @RenderBody()
+
+
+    </div>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    @RenderSection("Scripts", required: false)
+
+    <script src="/js/bootstrap.min.js"></script>
+    @* <script src="/js/jquery.nice-select.min.js"></script> *@
+    <script src="/js/jquery.nicescroll.min.js"></script>
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <script src="/js/jquery.countdown.min.js"></script>
+    <script src="/js/jquery.slicknav.js"></script>
+    <script src="/js/mixitup.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" integrity="sha384-7qAoOXltbVP82dhxHAUje59V5r2YsVfBafyUDxEdApLPmcdhBPg1DKg1ERo0BZlK" crossorigin="anonymous"></script>
+
+    @await RenderSectionAsync("Scripts2", required: false)
+</body>
+</html>

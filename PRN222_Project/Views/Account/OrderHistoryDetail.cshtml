@@ -1,0 +1,234 @@
+﻿@model OrderDetailViewModel
+
+@section Styles2 {
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-pink {
+            background-color: #fce4ec;
+            color: #d81b60;
+        }
+
+        .table-gray {
+            background-color: lightgrey;
+        }
+
+        .btn-outline-primary {
+            color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-outline-primary:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .table td, .table th {
+            vertical-align: middle !important;
+        }
+    </style>
+}
+<div class="container mt-5">
+    <button class="btn btn-dark" onclick=" window.location.href ='/account/orderhistory'">
+        <i class="fa fa-arrow-left me-2"></i> Back
+    </button>
+</div>
+
+<div class="container mt-5" style="margin-bottom: 70px">
+
+    <h2 class="mb-4">Chi tiết đơn hàng</h2>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header" style="background-color: #000000;">
+                    <h5 class="mb-0 text-white">Thông tin đơn hàng</h5>
+                </div>
+                <div class="card-body">
+                   
+                    <p><strong>Ngày đặt hàng:</strong>@Model.Order.OrderedDate?.ToString("dd/MM/yyyy")</p>
+                    <p>
+                        <strong>Ngày nhận hàng (dự kiến):</strong>
+                        @(Model.Order.ReceiveDate?.ToString("dd/MM/yyyy") ?? "N/A")
+                    </p>
+
+                    <p>
+                        <strong>Phương thức thanh toán:</strong> <span class="
+                            @if (Model.Order.PaymentMethod.PaymentMethodId == 1){@(" text-success font-weight-bold")};
+                            @if (Model.Order.PaymentMethod.PaymentMethodId == 2){@(" text-primary font-weight-bold")}
+                        "> @Model.Order.PaymentMethod.PaymentMethodName</span>
+                    </p>
+                    <p>
+                        <strong>Trạng thái thanh toán:</strong> <span class="
+                                 @if (Model.Order.PaymentStatus.PaymentStatusId == 1){@(" badge-success badge font-weight-bold")};
+                                 @if (Model.Order.PaymentStatus.PaymentStatusId == 1){@(" badge-danger badge font-weight-bold")};
+                                 @if (Model.Order.PaymentStatus.PaymentStatusId == 2){@(" badge-warning badge font-weight-bold")};
+                                 @if (Model.Order.PaymentStatus.PaymentStatusId == 4){@(" badge-info badge font-weight-bold")};
+                                 @if (Model.Order.PaymentStatus.PaymentStatusId == 5){@(" badge-success badge font-weight-bold")}
+
+                        ">@Model.Order.PaymentStatus.PaymentStatusName</span>
+                    </p>
+                    <p><strong>Mã giao dịch VNPAY:</strong> <span class="text-muted">@(Model.Order.VnpTxnRef ?? "Không có")</span></p>
+                    <p><strong>Tổng tiền:</strong> <span class="badge badge-pink">₫@Model.Order.TotalPrice</span></p>
+                    <p>
+                        <strong>Trạng thái đơn hàng:</strong> <span class="
+                                    @if (Model.Order.OrderStatus.OrderStatusId == 1){@(" text-warning  font-weight-bold")};
+                                    @if (Model.Order.OrderStatus.OrderStatusId == 2){@(" text-primary font-weight-bold")};
+                                    @if (Model.Order.OrderStatus.OrderStatusId == 3){@(" text-info font-weight-bold")};
+                                    @if (Model.Order.OrderStatus.OrderStatusId == 4){@(" text-success font-weight-bold")};
+                                    @if (Model.Order.OrderStatus.OrderStatusId == 5){@(" text-danger font-weight-bold")};
+                                    @if (Model.Order.OrderStatus.OrderStatusId == 6){@(" text-success font-weight-bold")}
+                        ">@Model.Order.OrderStatus.OrderStatusName</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header" style="background-color: #000000;">
+                    <h5 class="mb-0 text-white">Thông tin khách hàng</h5>
+                </div>
+               @{
+                   //CustomerAddress customerAddress = Model.Order.CustomerAddress;
+               }
+                <div class="card-body">
+                    <p><strong>Tên người nhận:</strong> @Model.Order.ReceiverName</p>
+                    <p><strong>Số điện thoại:</strong> @Model.Order.CustomerAddress.Phone</p>
+                    <p><strong>Địa chỉ:</strong> @Model.Order.CustomerAddress.Address, @Model.Order.CustomerAddress.WardName, @Model.Order.CustomerAddress.DistrictName, @Model.Order.CustomerAddress.ProvinceName</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header" style="background-color: #000000;">
+            <h5 class="mb-0 text-white">Sản phẩm</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered ">
+                    <thead class="table-gray">
+
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Product</th>
+                            <th class="text-center">Size</th>
+                            <th class="text-center">Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Total Price</th>
+                            <th class="text-center">Feedbacks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            int totalPrice = 0;
+                            int discount = 0;
+                        }
+                        @foreach (var orderDetail in Model.Order.OrderDetails)
+                        {
+                            totalPrice += (int)(orderDetail.TotalPrice * (1 - orderDetail.Product.Discount / 100));
+                            <tr>
+                                <td class="text-center">@i</td>
+                                <td>
+                                    <img src="/@orderDetail.Thumbnail" alt="Sản phẩm" class="img-thumbnail me-2" style="width: 50px;height: 50px">
+                                    @orderDetail.ProductName
+                                </td>
+                                <td class="text-center">@orderDetail.Size.SizeName</td>
+                                <td class="text-center">@orderDetail.Quantity</td>
+                                <td>₫@orderDetail.UnitPrice</td>
+								<td>-@orderDetail.Product.Discount%</td>
+                                <td>₫@(orderDetail.TotalPrice * (1 - orderDetail.Product.Discount/100))</td>
+
+
+
+
+                                <td class="text-center">
+
+                                    @*  <form action="${pageContext.request.contextPath}/productfeedback" method="get">
+                                            <input type="hidden" name="pid" value="">
+                                            <input type="hidden" name="oid" value="">
+                                            <button type="submit" class="btn btn-sm btn-outline-dark">Đánh giá</button>
+                                        </form>
+                                     *@
+
+                                    <button onclick="alert('Bạn chỉ có thể đánh giá khi đã nhận hàng.')" type="button" class="btn btn-sm btn-outline-dark">Đánh giá</button>
+
+                                </td>
+
+
+                            </tr>
+                            i++;
+                        }
+                        
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Tạm tính</strong></td>
+                            <td colspan="4">₫@totalPrice</td>
+                        </tr>
+                        @if(Model.Order.Voucher != null)
+                        {
+                            discount = (int) (Model.Order.TotalPrice * (Model.Order.Voucher.Percent/100));
+                        }
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Sử dụng voucher</strong></td>
+                            <td colspan="4" class="text-danger">-₫@discount</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Phí vận chuyển</strong></td>
+                            <td colspan="4">Free</td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Thành tiền</strong></td>
+                            <td colspan="4" class="text-success">₫@Model.Order.TotalPrice</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    @if(Model.Order.OrderStatusId <= 3)
+    {
+        <div class="text-right mt-4 mb-5">
+            <button id="cancelButton" onclick="DeleteOrder(@Model.Order.OrderId)" type="button" class="btn btn-danger btn-lg" aria-label="Hủy đơn hàng">
+                Hủy đơn hàng
+            </button>
+        </div>
+    }
+   
+  
+</div>
+
+@section Scripts {
+       
+
+    <script>
+  
+         function DeleteOrder(orderId) {
+             if(confirm("Do you want to delete this order?")){
+                     window.location.href = '/account/deleteorder?orderId='+orderId;
+             }
+        }
+    </script>
+}

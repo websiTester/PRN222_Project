@@ -1,0 +1,278 @@
+﻿@model Order
+
+@section Styles2{
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-pink {
+            background-color: #fce4ec;
+            color: #d81b60;
+        }
+
+        .table-gray {
+            background-color: lightgrey;
+        }
+
+        .btn-outline-primary {
+            color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-outline-primary:hover {
+                background-color: #007bff;
+                color: white;
+            }
+
+        .card-header {
+            background: black;
+        }
+
+        .table td, .table th {
+            vertical-align: middle !important;
+        }
+    </style>
+}
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-5">
+    <button class="btn btn-dark" onclick="document.location.href ='/order/ListAssignedOrderSaleManager'">
+        <i class="fa fa-arrow-left me-2"></i> Back
+    </button>
+</div>
+<div class="container mt-5" style="margin-bottom: 70px;padding-bottom: 100px">
+
+    <h2 class="mb-4">Order Detail</h2>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">Order Information</h5>
+                </div>
+                <div class="card-body">
+
+                    <p><strong>Ngày đặt hàng:</strong> @Model.OrderedDate?.ToString("dd/MM/yyyy") </p>
+                    <p>
+                        <strong>Ngày nhận hàng (dự kiến):</strong>
+                        @(Model.ReceiveDate?.ToString("dd/MM/yyyy") ?? "N/A")
+                    </p>
+                    <p>
+                        <strong>Phương thức thanh toán:</strong> <span class="
+                            @if (Model.PaymentMethod.PaymentMethodId == 1){@(" text-success font-weight-bold ")};
+                            @if (Model.PaymentMethod.PaymentMethodId == 2){@(" text-primary font-weight-bold ")}
+                        "> @Model.PaymentMethod.PaymentMethodName</span>
+                    </p>
+                    <p>
+                        <strong>Trạng thái thanh toán:</strong> <span class="
+                                 @if (Model.PaymentStatus.PaymentStatusId == 1){@(" badge-success badge font-weight-bold ")};
+                                 @if (Model.PaymentStatus.PaymentStatusId == 1){@(" badge-danger badge font-weight-bold ")};
+                                 @if (Model.PaymentStatus.PaymentStatusId == 2){@(" badge-warning badge font-weight-bold ")};
+                                 @if (Model.PaymentStatus.PaymentStatusId == 4){@(" badge-info badge font-weight-bold ")};
+                                 @if (Model.PaymentStatus.PaymentStatusId == 5){@(" badge-success badge font-weight-bold ")}
+
+                        ">@Model.PaymentStatus.PaymentStatusName</span>
+                    </p>
+                    <p><strong>Mã giao dịch VNPAY:</strong> <span class="text-muted">@(Model.VnpTxnRef ?? "Không có")</span></p>
+                    <p><strong>Tổng tiền:</strong> <span class="badge badge-pink">₫@Model.TotalPrice</span></p>
+                    <p>
+                        <strong>Trạng thái đơn hàng:</strong> <span class="
+                                    @if (Model.OrderStatus.OrderStatusId == 1){@(" text-warning  font-weight-bold ")};
+                                    @if (Model.OrderStatus.OrderStatusId == 2){@(" text-primary font-weight-bold ")};
+                                    @if (Model.OrderStatus.OrderStatusId == 3){@(" text-info font-weight-bold ")};
+                                    @if (Model.OrderStatus.OrderStatusId == 4){@(" text-success font-weight-bold ")};
+                                    @if (Model.OrderStatus.OrderStatusId == 5){@(" text-danger font-weight-bold ")};
+                                    @if (Model.OrderStatus.OrderStatusId == 6){@(" text-success font-weight-bold ")}
+                        ">@Model.OrderStatus.OrderStatusName</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">Thông tin khách hàng</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Tên người nhận:</strong> @Model.ReceiverName</p>
+                    <p><strong>Số điện thoại:</strong> @Model.CustomerAddress.Phone</p>
+                    <p><strong>Địa chỉ:</strong> @Model.CustomerAddress.Address, @Model.CustomerAddress.WardName, @Model.CustomerAddress.DistrictName, @Model.CustomerAddress.ProvinceName</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0 text-white">Sản phẩm</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-gray">
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Product</th>
+                            <th class="text-center">Size</th>
+                            <th class="text-center">Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Discount</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            int totalPrice = 0;
+                            int discount = 0;
+                        }
+                        @foreach (var orderDetail in Model.OrderDetails)
+                        {
+                            totalPrice += (int)(orderDetail.TotalPrice * (1 - orderDetail.Product.Discount / 100));
+                            <tr>
+                                <td class="text-center">@i</td>
+                                <td>
+                                    <img src="/@orderDetail.Thumbnail" alt="Sản phẩm" class="img-thumbnail me-2" style="width: 50px;height: 50px">
+                                    @orderDetail.ProductName
+                                </td>
+                                <td class="text-center">@orderDetail.Size.SizeName</td>
+                                <td class="text-center">@orderDetail.Quantity</td>
+                                <td>₫@orderDetail.UnitPrice</td>
+                                <td>-@orderDetail.Product.Discount%</td>
+                                <td>₫@(orderDetail.TotalPrice * (1 - orderDetail.Product.Discount / 100))</td>
+
+                            </tr>
+                            i++;
+                        }
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Tạm tính</strong></td>
+                            <td colspan="1">₫@totalPrice</td>
+                        </tr>
+                        @if (Model.Voucher != null)
+                        {
+                            discount = (int)(Model.TotalPrice * (Model.Voucher.Percent / 100));
+                        }
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Sử dụng voucher</strong></td>
+                            <td colspan="1" class="text-danger">-₫@discount</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Phí vận chuyển</strong></td>
+                            <td colspan="1">Free</td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Thành tiền</strong></td>
+                            <td colspan="1" class="text-success">₫@Model.TotalPrice</td>
+                        </tr>
+                        @if (ViewBag.QuantityError != null)
+                        {
+                            <tr>
+                                <td colspan="7" class="text-danger">@Html.Raw(ViewBag.QuantityError)</td>
+                            </tr>
+                        }
+                       
+                    </tfoot>
+                </table>
+                
+
+                </div>
+            </div>
+        </div>
+    <div class="text-right mt-4 mb-5 d-flex justify-content-end">
+
+
+        @*       <form action="${pageContext.request.contextPath}/doneorder" method="post" style="margin-left: 20px">
+                <input type="hidden" name="orderId" value="${order.orderId}">
+                <button type="submit" class="btn btn-success btn-lg">
+                    Đã nhận hàng
+                </button>
+            </form> *@
+
+
+
+
+        @*     <form action="${pageContext.request.contextPath}/createorderghn" method="post" style="margin-left: 20px">
+                <input type="hidden" name="orderId" value="${order.orderId}">
+                <button type="submit" class="btn btn-info btn-lg">
+                    Tạo đơn vận chuyển GHN
+                </button>
+            </form> *@
+
+
+        @if (Model.OrderStatusId == 2)
+        {
+            <form action="/order/DeliverOrder" method="post" style="margin-left: 20px">
+                <input type="hidden" name="orderId" value="@Model.OrderId">
+                <input type="hidden" name="orderStatusId" value="3">
+                <button type="submit" class="btn btn-info btn-lg">
+                    Giao hàng
+                </button>
+            </form>
+        }
+        @if (Model.OrderStatusId == 3)
+        {
+            <form action="/order/ReceiveOrderSuccess" method="post" style="margin-left: 20px">
+                <input type="hidden" name="orderId" value="@Model.OrderId">
+                <input type="hidden" name="orderStatusId" value="4">
+                <button type="submit" class="btn btn-info btn-lg">
+                    Đã nhận hàng
+                </button>
+            </form>
+        }
+
+        @if (Model.OrderStatusId == 1 || Model.OrderStatusId == 2 || Model.OrderStatusId == 3 || Model.OrderStatusId == 6)
+        {
+            <form action="/order/CancelOrder" method="post" style="margin-left: 20px">
+                <input type="hidden" name="orderId" value="@Model.OrderId">
+                <input type="hidden" name="orderStatusId" value="5">
+                <button id="cancelButton" style="margin-left: 20px" type="submit" class="btn btn-danger btn-lg me-2">
+                    Hủy đơn hàng
+                </button>
+            </form>
+
+        }
+
+
+
+
+
+        @*      <form style="margin-left: 20px" action="${pageContext.request.contextPath}/refundpayment" method="post" class="me-2">
+                <input type="hidden" name="vnp_TxnRef" value="${order.vnpTxnRef}">
+                <input type="hidden" name="amount" value="${order.totalAmount}">
+                <input type="hidden" name="vnp_CreateDate" value="${order.vnpCreateDate}">
+                <input type="hidden" name="vnp_CreateBy" value="${sessionScope.account.username}">
+                <input type="hidden" name="orderId" value="${order.orderId}">
+                <button type="submit" class="btn btn-warning btn-lg">
+                    Hoàn tiền
+                </button>
+            </form> *@
+
+
+
+    </div>
+    </div>
+    
+</div>

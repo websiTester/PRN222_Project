@@ -1,0 +1,90 @@
+﻿@model ProfileViewModel
+
+@section Styles {
+	<link rel="stylesheet" href="/css/profile.css">
+}
+
+<div class="container-xl px-4 mt-4">
+	<hr class="mt-0 mb-4">
+	<div class="row" style="margin-bottom: 40px">
+
+		<!--Side Bar Start-->
+
+		@await Html.PartialAsync("_ProfileSideBar", Model)
+		<!--Side bar end-->
+		<!--Main section start-->
+		<div class="col-xl-8">
+			<!-- Account details card-->
+			<div class="card mb-4">
+				<div class="card-header">Account Detail</div>
+				<div class="card-body">
+					<form action="/account/profile" method="POST">
+						<!-- Form Group (username)-->
+						<div class="mb-3">
+							<label class="small mb-1" for="inputUsername">Username</label>
+							<input class="form-control" asp-for="@Model.User.UserName" readonly="" type="text">
+						</div>
+						<!-- Form Row-->
+						<div class="row gx-3 mb-3">
+							<!-- Form Group (first name)-->
+							<div class="col-md-6">
+								<label class="small mb-1" for="inputFirstName">First Name</label>
+								<input required class="form-control" asp-for="@Model.User.FirstName" type="text" maxlength="50" placeholder="Enter First Name">
+							</div>
+							<!-- Form Group (last name)-->
+							<div class="col-md-6">
+								<label class="small mb-1" for="inputLastName">Last Name</label>
+								<input required class="form-control" asp-for="@Model.User.LastName" type="text" maxlength="50" placeholder="Enter Last Name">
+							</div>
+						</div>
+
+						<!-- Form Group (email address)-->
+						<div class="mb-3">
+							<label class="small mb-1" for="inputEmailAddress">Email</label>
+							<input required class="form-control" type="email" readonly="" asp-for="@Model.User.Email">
+						</div>
+						<div class="mb-3">
+							<label class="small mb-1" for="inputPhone">Phone</label>
+							<input required class="form-control" maxlength="15" pattern="\d{10}" type="tel" placeholder="Enter phone number" asp-for="@Model.User.PhoneNumber">
+						</div>
+						<div class="mb-3">
+							<label class="small mb-1" for="inputPhone">Balance</label>
+							<input disabled value="₫ @Model.User.Balance.ToString("N0", new CultureInfo("vi-VN"))" class="form-control" maxlength="15" pattern="\d{10}" placeholder="Enter phone number">
+						</div>
+						<!-- Form Row-->
+						<div class="row gx-3 mb-3">
+							<!-- Form Group (gender)-->
+							<div class="col-md-6">
+								<label class="small mb-1">Gender</label>
+								<div>
+									<div class="form-check form-check-inline">
+										<input value="true" asp-for="@Model.User.Gender" class="form-check-input" type="radio">
+										<label class="form-check-label" for="radioMale">Male</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input value="false" asp-for="@Model.User.Gender" class="form-check-input" type="radio">
+										<label class="form-check-label" for="radioFemale">Female</label>
+									</div>
+								</div>
+							</div>
+							<!-- Form Group (birthday)-->
+							<div class="col-md-6">
+								<label class="small mb-1" for="inputBirthday">Date of Birth</label>
+								<input class="form-control" type="date" asp-for="@Model.User.Dob">
+							</div>
+						</div>
+						<!-- Save changes button-->
+						<button class="btn btn-dark" type="submit">Save</button>
+
+						<div style="margin: 20px;" class="text-primary" asp-validation-summary="All">
+
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!--Main section End-->
+
+	</div>
+</div>
