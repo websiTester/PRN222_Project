@@ -5,6 +5,7 @@ using PagedList;
 using PRN222_Project.Models;
 using PRN222_Project.RequestHandlers.CartHandler;
 using PRN222_Project.RequestHandlers.OrderHandler;
+using PRN222_Project.Services.Implementations;
 using PRN222_Project.Services.Interfaces;
 using PRN222_Project.ViewModels;
 
@@ -21,7 +22,8 @@ namespace PRN222_Project.Controllers
 		private IGetVoucherByIdService _getVoucherByIdService;
 		private IUpdateVoucherService _updateVoucherService;
 		private IGetProductListService _getProductListService;
-		 
+		private IUpdateUserProfileService _updateUserProfileService;
+
 		public OrderController(
 			UserManager<User> userManager,
 			IGetAllOrderService getAllOrderService,
@@ -30,7 +32,8 @@ namespace PRN222_Project.Controllers
 			IUpdateProductSizeService updateProductSizeService,
 			IUpdateVoucherService updateVoucherService,
 			IGetVoucherByIdService getVoucherByIdService,
-			IGetProductListService getProductListService
+			IGetProductListService getProductListService,
+			IUpdateUserProfileService updateUserProfileService
 		)
 		{ 
 			_userManager = userManager;
@@ -41,6 +44,7 @@ namespace PRN222_Project.Controllers
 			_updateVoucherService = updateVoucherService;
 			_getVoucherByIdService = getVoucherByIdService;
 			_getProductListService = getProductListService;
+			_updateUserProfileService = updateUserProfileService;
 		}
 		
 		public IActionResult ListAssignedOrderSaleManager(ListOrderSaleManagerViewModel model, int? page)
@@ -128,7 +132,16 @@ namespace PRN222_Project.Controllers
 			return RedirectToAction("OrderDetailManagement", new { orderId = orderId });
 		}
 
-
+		public async Task<IActionResult> ReturnMoney(int orderId)
+		{
+			User user = await _userManager.GetUserAsync(User);
+			Order order = _getOrderByIdService.GetOrderById(orderId);
+			order.PaymentStatusId = 5;
+			user.Balance += (order.TotalPrice ?? 0);
+			_updateUserProfileService.UpdateUserProfile(user);
+			_updateOrderService.UpdateOrder(order);
+			return RedirectToAction("OrderDetailManagement", new { orderId = orderId });
+		}
 		public IActionResult Dashboard(DateTime? fromDate, DateTime? toDate)
 		{
 			DashboardViewModel model = OrderDashboardHandler

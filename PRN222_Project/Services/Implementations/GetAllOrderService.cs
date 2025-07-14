@@ -16,6 +16,11 @@ namespace PRN222_Project.Services.Implementations
 		{
 			return _repository.GetAllOrders();
 		}
+
+		public List<Order> GetPendingRefundOrders()
+		{
+			return _repository.GetAllOrders().Where(o => o.PaymentStatusId == 4).ToList();
+		}
 		public List<Order> GetAssignedOrder()
 		{
 			return _repository.GetAssignedOrder();

@@ -7,5 +7,6 @@ namespace PRN222_Project.Services.Interfaces
 		List<Order> GetAllOrders();
 		List<Order> GetAssignedOrder();
 		List<Order> GetUnProcessedOrder();
+		List<Order> GetPendingRefundOrders();
 	}
 }

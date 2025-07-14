@@ -113,7 +113,7 @@
                     <h5 class="mb-0 text-white">Thông tin khách hàng</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Tên người nhận:</strong> @Model.ReceiverName</p>
+                    <p><strong>Tên người nhận:</strong> @Model.CustomerAddress.ReceiverName</p>
                     <p><strong>Số điện thoại:</strong> @Model.CustomerAddress.Phone</p>
                     <p><strong>Địa chỉ:</strong> @Model.CustomerAddress.Address, @Model.CustomerAddress.WardName, @Model.CustomerAddress.DistrictName, @Model.CustomerAddress.ProvinceName</p>
                 </div>
@@ -243,6 +243,16 @@
             </form>
         }
 
+        @if (Model.OrderStatusId == 5 && Model.PaymentStatusId == 4)
+        {
+            <form action="/order/ReturnMoney" method="post" style="margin-left: 20px">
+                <input type="hidden" name="orderId" value="@Model.OrderId">
+                <button type="submit" class="btn btn-info btn-lg">
+                    Hoàn tiền
+                </button>
+            </form>
+        }
+
         @if (Model.OrderStatusId == 1 || Model.OrderStatusId == 2 || Model.OrderStatusId == 3 || Model.OrderStatusId == 6)
         {
             <form action="/order/CancelOrder" method="post" style="margin-left: 20px">
@@ -254,6 +264,8 @@
             </form>
 
         }
+
+
 
 
 

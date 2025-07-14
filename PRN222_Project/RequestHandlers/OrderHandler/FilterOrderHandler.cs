@@ -21,6 +21,10 @@ namespace PRN222_Project.RequestHandlers.OrderHandler
 			{
 				orders = _getAllOrderService.GetUnProcessedOrder();
 			}
+			else if(orderType == 4)
+			{
+				orders = _getAllOrderService.GetPendingRefundOrders();
+			}
 			if (fromDate != null)
 			{
 				orders = orders.Where(o => o.OrderedDate >= fromDate).ToList();

@@ -31,6 +31,12 @@ namespace PRN222_Project.RequestHandlers.OrderHandler
 			}
 
 			order.OrderStatusId = orderStatusId;
+
+			if (order.PaymentStatusId == 2)
+			{
+				order.PaymentStatusId = 4;
+			}
+
 			_updateOrderService.UpdateOrder(order);
 		}
 	}

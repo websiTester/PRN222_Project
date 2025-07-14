@@ -27,13 +27,19 @@ namespace PRN222_Project.RequestHandlers.DeleteOrderHandler
 					_updateProductSizeService.UpdateProductSize(productSize);
 				}
 			}
-
 			order.OrderStatusId = 5;
+
 			if (order.VoucherId != null)
 			{
 				Voucher voucher = order.Voucher;
 				voucher.Quantity += 1;
 				_updateVoucherService.UpdateVoucher(voucher);
+			}
+
+			//User payed for the order => Return money
+			if(order.PaymentStatusId == 2)
+			{
+				order.PaymentStatusId = 4;
 			}
 			_updateOrderService.UpdateOrder(order);
 		}

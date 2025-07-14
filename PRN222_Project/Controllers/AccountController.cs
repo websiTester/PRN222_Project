@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PagedList;
 using PRN222_Project.Models;
 using PRN222_Project.RequestHandlers.AccountHandler;
 using PRN222_Project.RequestHandlers.DeleteOrderHandler;
@@ -469,15 +470,18 @@ namespace PRN222_Project.Controllers
 			return RedirectToAction("Address");
 		}
 
-		public IActionResult OrderHistory()
+		public IActionResult OrderHistory(int? page)
 		{
 			User user = _userManager.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
 			
 			OrderHistoryViewModel model = new OrderHistoryViewModel
 			{
 				User = user,
-				OrderList = _getListOrderByUserIdService.GetListOrderByUserId(user.Id)
+				OrderList = _getListOrderByUserIdService.GetListOrderByUserId(user.Id),
+				Index = ((page ?? 1) - 1) * 5 + 1
 			};
+
+			model.OrderPageList = model.OrderList.ToPagedList(page??1, 5);
 			return View(model);
 		}
 
