@@ -399,8 +399,12 @@ namespace PRN222_Project.Controllers
 		}
 
 
-		public IActionResult Address()
+		public IActionResult Address(string? error)
 		{
+			if(error != null)
+			{
+				ViewBag.ErrorTitle = error;
+			}
 			string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
 			AddressViewModel model = new AddressViewModel
 			{
@@ -434,8 +438,17 @@ namespace PRN222_Project.Controllers
 
 		public IActionResult DeleteAddress(int addressId)
 		{
-			_deleteAddressByIdService.DeleteAddressById(addressId);
-			return RedirectToAction("Address");
+			string error = null;
+			try
+			{
+				_deleteAddressByIdService.DeleteAddressById(addressId);
+			} catch(Exception e)
+			{
+				error = "Address is being used in an order!";
+			}
+			
+
+			return RedirectToAction("Address", new { error = error });
 		}
 
 		public IActionResult SetDefaultAddress(int addressId)
